@@ -16,68 +16,76 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import vnua.fita.bookstore.DAO.UserDao;
 import vnua.fita.bookstore.bean.MyUtils;
 import vnua.fita.bookstore.bean.User;
+import vnua.fita.bookstore.model.UserDAO;
 
 /**
  * Servlet implementation class LoginServlet
  */
 public class LoginServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private static final String JDBC_URL = "jdbc:mysql://localhost:3306//bookshop";
-    private static final String JDBC_USER = "root";
-    private static final String JDBC_PASSWORD = "0945057018";
-       
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public LoginServlet() {
-        super();
-        // TODO Auto-generated constructor stub
-    }
+	private UserDAO userDAO;
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		RequestDispatcher rd = this.getServletContext().getRequestDispatcher("/Views/loginView.jsp");
+	public LoginServlet() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	public void init() throws ServletException {
+		String jdbcURL = getServletContext().getInitParameter("jdbcURL");
+		String jdbcUsername = getServletContext().getInitParameter("jdbcUsername");
+		String jdbcPassword = getServletContext().getInitParameter("jdbcPassword");
+		userDAO = new UserDAO("jdbc:mysql://localhost:3306/bookstore", "root", "0945057018");
+	}
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		RequestDispatcher rd = this.getServletContext()
+				.getRequestDispatcher("/Views/loginView.jsp");
 		rd.forward(request, response);
 	}
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 		String username = request.getParameter("username");
 		String password = request.getParameter("password");
-		
-		if (validateLogin(username, password)) {
-			// nếu đúng, tạo session và chuyển hướng đến trang chính
-			HttpSession session = request.getSession();
-			session.setAttribute("username", username);
-			response.sendRedirect("/Views/loginResult.jsp");
-		}else {
-			// nếu sai, chuyển hướng đến trang đăng nhập lại
-			response.sendRedirect("/Views/loginView.jsp?error=true");
-		}	
-	}
-	
-	private boolean validateLogin(String username, String password) {
-        try (Connection connection = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD)) {
-            String query = "SELECT * FROM users WHERE username = ? AND password = ?";
-            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-                preparedStatement.setString(1, username);
-                preparedStatement.setString(2, password);
 
-                try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                    return resultSet.next(); // Nếu có kết quả, đăng nhập thành công
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
+		LoginForm loginForm = new LoginForm(username, password);
+
+		// Kiểm tra tính hợp lệ của dữ liệu nhập vào
+		List<String> errors = loginForm.validate();
+
+		// Nếu không có lỗi validate
+		if (errors.isEmpty()) {
+			// Tìm user trong DB
+			User user = userDAO.findUser(username, password);
+
+			// Nếu sai thông tin trong db thì bổ sung vào danh sách lỗi
+			if (user == null) {
+				errors.add("Sai thong tin tai khoan");
+			} else { // Đăng nhập thành công
+				HttpSession session = request.getSession();
+				MyUtils.storeLoginedUser(session, user);
+				if (user.getRole() == 0) {
+					RequestDispatcher rd = this.getServletContext()
+							.getRequestDispatcher("/Views/clientHomeView.jsp");
+					rd.forward(request, response);
+				} else if (user.getRole() == 1) {
+					response.sendRedirect(request.getContextPath()+"/adminHome");
+				}
+			}
+		}
+
+		if (!errors.isEmpty()) {
+			request.setAttribute("errors", String.join(", ", errors));
+			request.setAttribute("loginForm", loginForm);
+
+			RequestDispatcher rd = this.getServletContext()
+					.getRequestDispatcher("/Views/loginView.jsp");
+			rd.forward(request, response);
+		}
+	}
 
 }
