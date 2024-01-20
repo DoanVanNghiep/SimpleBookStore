@@ -1,16 +1,10 @@
 package vnua.fita.bookstore.servlet;
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -37,7 +31,7 @@ public class LoginServlet extends HttpServlet {
 		String jdbcURL = getServletContext().getInitParameter("jdbcURL");
 		String jdbcUsername = getServletContext().getInitParameter("jdbcUsername");
 		String jdbcPassword = getServletContext().getInitParameter("jdbcPassword");
-		userDAO = new UserDAO("jdbc:mysql://localhost:3306/bookstore", "root", "0945057018");
+		userDAO = new UserDAO("jdbc:mysql://localhost:3306/bookshop", "root", "0945057018");
 	}
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -61,7 +55,6 @@ public class LoginServlet extends HttpServlet {
 		if (errors.isEmpty()) {
 			// Tìm user trong DB
 			User user = userDAO.findUser(username, password);
-
 			// Nếu sai thông tin trong db thì bổ sung vào danh sách lỗi
 			if (user == null) {
 				errors.add("Sai thong tin tai khoan");
@@ -70,14 +63,14 @@ public class LoginServlet extends HttpServlet {
 				MyUtils.storeLoginedUser(session, user);
 				if (user.getRole() == 0) {
 					RequestDispatcher rd = this.getServletContext()
-							.getRequestDispatcher("/Views/clientHomeView.jsp");
+							.getRequestDispatcher("/Views/loginResult.jsp");
 					rd.forward(request, response);
 				} else if (user.getRole() == 1) {
-					response.sendRedirect(request.getContextPath()+"/adminHome");
+					response.sendRedirect(request.getContextPath()+ "/AdminHomeServlet");
 				}
 			}
 		}
-
+		// có lỗi validate hoặc sai thông tin tài khoản
 		if (!errors.isEmpty()) {
 			request.setAttribute("errors", String.join(", ", errors));
 			request.setAttribute("loginForm", loginForm);

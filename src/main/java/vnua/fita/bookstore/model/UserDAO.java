@@ -23,28 +23,42 @@ public class UserDAO {
 
 
 	public User findUser(String username, String password) {
-		String sql = "SELECT * FROM tbluser WHERE user_name = ? AND password = ?";
-		jdbcConnection = DBConnection.createConnection(jdbcURL, jdbcUsername,
-				jdbcPassword);
-//		if (jdbcConnection == null) {
-//			jdbcConnection = DBConnection.createConnection(
-//					"jdbc:mysql://localhost:3306/bookstore", "root", "123456");
-//		}
+		jdbcConnection = DBConnection.createConnection(jdbcURL,jdbcUsername,jdbcPassword);
+		String sql = "SELECT * FROM users WHERE username = ? AND password = ?";
 		try {
 			preStatement = jdbcConnection.prepareStatement(sql);
 			preStatement.setString(1, username);
 			preStatement.setString(2, password);
 			resultSet = preStatement.executeQuery();
 			if (resultSet.next()) {
-				return new User(resultSet.getString("user_name"),
+				return new User(resultSet.getString("username"),
 						resultSet.getString("password"), resultSet.getInt("role"),
 						resultSet.getString("fullname"), resultSet.getString("email"),
-						resultSet.getString("mobile"), resultSet.getString("address"));
+						resultSet.getString("mobile"));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
-
+	
+	public User findUser(String username) {
+		String sql = "SELECT * FROM users WHERE username = ?";
+		jdbcConnection = DBConnection.createConnection(jdbcURL, jdbcUsername,jdbcPassword);
+		try {
+			preStatement = jdbcConnection.prepareStatement(sql);
+			preStatement.setString(1, username);
+			resultSet = preStatement.executeQuery();
+			if (resultSet.next()) {
+				return new User(resultSet.getString("username"),
+						resultSet.getString("password"), resultSet.getInt("role"),
+						resultSet.getString("fullname"), resultSet.getString("email"),
+						resultSet.getString("mobile"));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 }

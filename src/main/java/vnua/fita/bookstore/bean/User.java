@@ -1,76 +1,66 @@
 package vnua.fita.bookstore.bean;
 
 public class User {
-	private static String userName;
-	private static String password;
-	private static int role;
-	private static String fullName;
-	private static String email;
-	private static String mobile;
-	public static String getEmail() {
-		return email;
-	}
-	public static void setEmail(String email) {
-		User.email = email;
-	}
-	public static String getMobile() {
-		return mobile;
-	}
-	public static void setMobile(String mobile) {
-		User.mobile = mobile;
-	}
-	public static String getAddress() {
-		return address;
-	}
-	public static void setAddress(String address) {
-		User.address = address;
-	}
-
-
-	private static String address;
-	public static String getUserName() {
+	private String userName;
+	private String password;
+	private int role;
+	private String fullName;
+	private String email;
+	private String mobile;
+	public String getUserName() {
 		return userName;
 	}
-	public static void setUserName(String userName) {
-		User.userName = userName;
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
-	public static String getPassword() {
+	public String getPassword() {
 		return password;
 	}
-	public static void setPassword(String password) {
-		User.password = password;
+	public void setPassword(String password) {
+		this.password = password;
 	}
-	public static int getRole() {
+	public int getRole() {
 		return role;
 	}
-	public static void setRole(int role) {
-		User.role = role;
+	public void setRole(int role) {
+		this.role = role;
 	}
-	public static String getFullName() {
+	public String getFullName() {
 		return fullName;
 	}
-	public static void setFullName(String fullName) {
-		User.fullName = fullName;
+	public void setFullName(String fullName) {
+		this.fullName = fullName;
 	}
-	
-	public User(String username, String password, int role, String fullname, String email,
-			String mobile, String address) {
-		this.userName = username;
+	public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
+	}
+	public String getMobile() {
+		return mobile;
+	}
+	public void setMobile(String mobile) {
+		this.mobile = mobile;
+	}
+	public User() {
+		
+	}
+	public User(String userName, String password, int role) {
+		super();
+		this.userName = userName;
 		this.password = password;
 		this.role = role;
-		this.fullName = fullname;
+	}
+	public User(String userName, String password, int role, String fullName, String email, String mobile) {
+		super();
+		this.userName = userName;
+		this.password = password;
+		this.role = role;
+		this.fullName = fullName;
 		this.email = email;
 		this.mobile = mobile;
-		this.address = address;
 	}
 	
-	
-    public User(String username,String password,String fullName,int role) {
-        username = this.userName;
-        password = this.password;
-        fullName = this.fullName;
-        role = this.role;
-        // TODO Auto-generated constructor stub
-    }
 	
 }

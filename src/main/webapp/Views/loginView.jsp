@@ -10,7 +10,7 @@
 	<p style="color: red;">${errors}</p>
 	<form action="login" method="post">
 		<label for="username">Tài khoản</label><br> <input type="text"
-			name="username" id="username" value="${loginForm.username}" ><br>
+			name="username" id="username" value="${loginForm.userName}" ><br>
 		<br> <label for="password">Mật khẩu</label><br> <input
 			type="password" name="password" id="password" value="${loginForm.password}"><br>
 		<br> <input type="submit" value="Đăng nhập"> <a

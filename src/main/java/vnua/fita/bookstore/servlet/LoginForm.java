@@ -4,46 +4,52 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LoginForm{
-	private static String userName;
-    private static String password;
-    
-    
-    public static String getUserName() {
+	private String userName;
+    private String password;
+    private String rememberMe;
+	public LoginForm() {
+	}
+	
+	public LoginForm(String userName, String password) {
+		this.userName = userName;
+		this.password = password;
+	}
+
+	public LoginForm(String userName, String password, String rememberMe) {
+		super();
+		this.userName = userName;
+		this.password = password;
+		this.rememberMe = rememberMe != null ? "checked" : "";
+	}
+	public String getUserName() {
 		return userName;
 	}
-
-	public static void setUserName(String userName) {
-		LoginForm.userName = userName;
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
-
-	public static String getPassword() {
+	public String getPassword() {
 		return password;
 	}
-
-	public static void setPassword(String password) {
-		LoginForm.password = password;
+	public void setPassword(String password) {
+		this.password = password;
+	}
+	public String getRememberMe() {
+		return rememberMe;
+	}
+	public void setRememberMe(String rememberMe) {
+		this.rememberMe = rememberMe;
 	}
 	
 	public List<String> validate(){
-		List<String> errors = new ArrayList<>();
+		List<String> erros = new ArrayList<String>();
 		if(userName == null || userName.trim().isEmpty()) {
-			errors.add("Nhap tai khoan.");
+			erros.add("Nhập tài khoản.");
 		}
 		if(password == null || password.trim().isEmpty()) {
-			errors.add("Nhap mat khau.");
+			erros.add("Nhập mật khẩu.");
 		}
-		return errors;
+		return erros;
 	}
-	/**
-     * @see HttpServlet#HttpServlet()
-     */
-    public LoginForm() {
-        super();
-        // TODO Auto-generated constructor stub
-    }
-    public LoginForm(String username,String password) {
-        username = this.userName;
-        password = this.password;
-        // TODO Auto-generated constructor stub
-    }
+	
+    
 }
